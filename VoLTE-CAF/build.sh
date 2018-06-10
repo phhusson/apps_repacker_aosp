@@ -19,8 +19,6 @@ find "$system_folder"/app/ims/lib/arm64 -type l -exec readlink '{}' + | \
 		cp "$system_folder"/$p "$libdst"
 	done
 
-cp "$system_folder"/lib64/lib-imsvt.so "$libdst"
-
 cp "$system_folder"/lib64/libnativeloader.so "$libdst"
 cp "$system_folder"/lib64/libnativehelper.so "$libdst"
 cp "$system_folder"/lib64/libcutils.so "$libdst"
@@ -39,10 +37,15 @@ cp "$system_folder"/lib64/libhardware.so "$libdst"
 cp "$system_folder"/lib64/libhwbinder.so "$libdst"
 cp "$system_folder"/lib64/liblzma.so "$libdst"
 
-#Missing libs:
-#android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so
-#It looks like the apk => /data/app/xx/lib extraction doesn't want libs not starting with lib
-#TODO: sed the libs and their dependancy to rename to something starting with lib
+for i in android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so;do
+	newName="$(echo "$i" |sed -E -e 's/^andr/libA/g' -e 's/@/-/g')"
+	cp "$system_folder"/lib64/$i "$libdst"/$newName
+done
+
+for i in android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so;do
+	newName="$(echo "$i" |sed -E -e 's/^andr/libA/g' -e 's/@/-/g')"
+	sed -i -E "s/$i/$newName/g" "$libdst"/*.so
+done
 
 sed -i -e '/com.qti.vzw.ims.internal/d' ims/AndroidManifest.xml
 apktool b ims

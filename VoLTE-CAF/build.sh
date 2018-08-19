@@ -48,6 +48,10 @@ for i in android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so a
 done
 
 sed -i -e '/com.qti.vzw.ims.internal/d' ims/AndroidManifest.xml
+sed -i \
+	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
+	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;;g' \
+	$(find -name \*.smali)
 apktool b ims
 signapk -a 4096 -w \
 	/build/AOSP-8.1-clean/build/target/product/security/platform.x509.pem \

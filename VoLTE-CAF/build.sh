@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ "$#" -ne 2 ];then
 	echo "Usage: $0 /path/to/system/ /path/to/vendor/"
 	exit 1
@@ -10,7 +12,7 @@ vendor_folder="$2"
 libdst="ims/lib/arm64-v8a/"
 
 rm -Rf ims
-apktool d "$system_folder"/app/ims/ims.apk
+java -jar ../apktool.jar d "$system_folder"/app/ims/ims.apk
 mkdir -p "$libdst"
 find "$system_folder"/app/ims/lib/arm64 -type f -exec cp '{}' "$libdst" \; 
 find "$system_folder"/app/ims/lib/arm64 -type l -exec readlink '{}' + | \
@@ -52,8 +54,8 @@ sed -i \
 	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
 	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;g' \
 	$(find -name \*.smali)
-apktool b ims
-signapk -a 4096 -w \
-	/build/AOSP-8.1-clean/build/target/product/security/platform.x509.pem \
-	/build/AOSP-8.1-clean/build/target/product/security/platform.pk8 \
+java -jar ../apktool.jar b ims
+LD_LIBRARY_PATH=../signapk/ java -jar ../signapk/signapk.jar -a 4096\
+	../keys/platform.x509.pem \
+	../keys/platform.pk8 \
 	ims/dist/ims.apk ims.apk

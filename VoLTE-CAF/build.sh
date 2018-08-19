@@ -50,7 +50,7 @@ done
 sed -i -e '/com.qti.vzw.ims.internal/d' ims/AndroidManifest.xml
 sed -i \
 	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
-	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;;g' \
+	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;g' \
 	$(find -name \*.smali)
 apktool b ims
 signapk -a 4096 -w \

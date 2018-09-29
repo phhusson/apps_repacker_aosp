@@ -57,12 +57,23 @@ for i in android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so a
 	sed -i -E "s/$i/$newName/g" "$libdst"/*.so
 done
 
+(
+set -x
+rm -Rf build
+mkdir build
+find src -name \*.java |while read f;do
+base="$(dirname "$f" |sed -E 's;(\./)?src/;;g')"
+out="build/$base"
+mkdir -p "$out"
+javac -cp ../libs/framework.jar:../libs/ims-common.jar -d "$out" "$f" 
+done
+$ANDROID_HOME/build-tools/28.0.2/d8 --output build/ --lib ../libs/framework.jar --lib ../libs/ims-common.jar $(find build -name \*.class)
+java -jar ../baksmali.jar d build/classes.dex -o HwIms/smali
+)
+
 sed -i -E \
 	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
 	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;g' \
-	-e 's|invoke-static \{([pv0-9]+), ([pv0-9]+)\}, Lcom/android/ims/HwImsManager;->getWfcMode\(Landroid/content/Context;I\)I|invoke-static {\1}, Lcom/android/ims/ImsManager;->getWfcMode(Landroid/content/Context;)I|g' \
-	-e 's|invoke-static \{([pv0-9]+), ([pv0-9]+)\}, Lcom/android/ims/HwImsManager;->isWfcEnabledByPlatform\(Landroid/content/Context;I\)Z|invoke-static {\1}, Lcom/android/ims/ImsManager;->isWfcEnabledByPlatform(Landroid/content/Context;)Z|g' \
-	-e 's|invoke-static \{([pv0-9]+), ([pv0-9]+)\}, Lcom/android/ims/HwImsManager;->isEnhanced4gLteModeSettingEnabledByUser\(Landroid/content/Context;I\)Z|invoke-static \{\1\}, Lcom/android/ims/ImsManager;->isEnhanced4gLteModeSettingEnabledByUser\(Landroid/content/Context;\)Z|g' \
 	$(find -name \*.smali)
 java -jar ../apktool.jar b HwIms
 LD_LIBRARY_PATH=../signapk/ java -jar ../signapk/signapk.jar -a 4096\

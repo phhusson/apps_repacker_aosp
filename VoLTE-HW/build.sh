@@ -61,19 +61,15 @@ done
 set -x
 rm -Rf build
 mkdir build
-find src -name \*.java |while read f;do
-base="$(dirname "$f" |sed -E 's;(\./)?src/;;g')"
-out="build/$base"
-mkdir -p "$out"
-javac -cp ../libs/framework.jar:../libs/ims-common.jar -d "$out" "$f" 
-done
-$ANDROID_HOME/build-tools/28.0.2/d8 --output build/ --lib ../libs/framework.jar --lib ../libs/ims-common.jar $(find build -name \*.class)
+javac -cp ../libs/framework.jar:../libs/telephony-common.jar:../libs/ims-common.jar -d build $(find src -name \*.java)
+$ANDROID_HOME/build-tools/28.0.2/d8 --output build/ --lib ../libs/framework.jar --lib ../libs/telephony-common.jar --lib ../libs/ims-common.jar $(find build -name \*.class)
 java -jar ../baksmali.jar d build/classes.dex -o HwIms/smali
 )
 
-perl -0777 -i -p -e 's|invoke-virtual \{([pv0-9]+)\}, Lcom/android/internal/telephony/Phone;->getImsSwitch\(\)Z\s+move-result ([pv0-9]+)|const/4 \2, 0x1|g' HwIms/smali/com/huawei/ims/HwImsUtImpl.smali
+perl -0777 -i -p -e 's|invoke-virtual \{([pv0-9]+)\}, Lcom/android/internal/telephony/Phone;->getImsSwitch\(\)Z\s+move-result ([pv0-9]+)|const/4 \2, 0x1|g' HwIms/smali/com/huawei/ims/HwImsUtImpl.smali HwIms/smali/com/huawei/ims/ImsServiceSub.smali
 
 sed -i -E \
+	-e 's;Lcom/android/ims/ImsReasonInfo;Landroid/telephony/ims/ImsReasonInfo;g' \
 	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
 	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;g' \
 	$(find -name \*.smali)

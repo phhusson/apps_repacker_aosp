@@ -19,4 +19,8 @@ public class HwTelephonyManager {
 	public int getCardType(int p) {
 		return 0;
 	}
+	
+	public bool isCTSimCard(int p) {
+		return false
+	}
 }

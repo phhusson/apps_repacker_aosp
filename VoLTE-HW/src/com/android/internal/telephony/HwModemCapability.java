@@ -1,7 +1,7 @@
 package com.android.internal.telephony;
 
 public class HwModemCapability {
-	public static boolean isCapabilitySupport(int cap) {
+	public static boolean isCapabilitySupport(int capability) {
 		boolean z = true;
 		int bcdIndex = capability / 4;
 		int bcdOffset = capability % 4;

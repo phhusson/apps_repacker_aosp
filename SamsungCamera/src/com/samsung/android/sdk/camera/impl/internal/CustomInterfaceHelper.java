@@ -29,7 +29,19 @@ public class CustomInterfaceHelper {
 
     public static <TKey> List<TKey> getAvailableSamsungKeyList(CameraCharacteristics cameraCharacteristics, Class<?> metadataClass, Class<TKey> keyClass, Key<int[]> key) {
         //return cameraCharacteristics.getAvailableSamsungKeyList(metadataClass, keyClass, key);
-		android.util.Log.d("PHH", "getAvailableSamsungKeyList");
-		return new ArrayList();
+android.util.Log.d("PHH", "getAvailableSamsungKeyList");
+try {
+        int[] filterTags = (int[]) cameraCharacteristics.get(key);
+        if (filterTags == null) {
+            return null;
+        }
+
+	java.lang.reflect.Method m = cameraCharacteristics.getClass().getMethod("getAvailableKeyList", Class.class, Class.class, Class.class);
+	m.setAccessible(true);
+	return (List)m.invoke(cameraCharacteristics, metadataClass, keyClass, filterTags);
+} catch(Exception e) {
+	android.util.Log.d("PHH", "Failed", e);
+	return null;
+}
     }
 }

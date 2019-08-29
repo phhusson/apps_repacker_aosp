@@ -64,7 +64,7 @@
 .end method
 
 .method public static getAvailableSamsungKeyList(Landroid/hardware/camera2/CameraCharacteristics;Ljava/lang/Class;Ljava/lang/Class;Landroid/hardware/camera2/CameraCharacteristics$Key;)Ljava/util/List;
-    .registers 4
+    .registers 13
     .annotation system Ldalvik/annotation/Signature;
         value = {
             "<TKey:",
@@ -83,18 +83,99 @@
     .end annotation
 
     .line 32
-    const-string p0, "PHH"
+    const-string v0, "PHH"
 
-    const-string p1, "getAvailableSamsungKeyList"
+    const-string v1, "getAvailableSamsungKeyList"
 
-    invoke-static {p0, p1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 33
-    new-instance p0, Ljava/util/ArrayList;
+    .line 34
+    const/4 v0, 0x0
 
-    invoke-direct {p0}, Ljava/util/ArrayList;-><init>()V
+    :try_start_8
+    invoke-virtual {p0, p3}, Landroid/hardware/camera2/CameraCharacteristics;->get(Landroid/hardware/camera2/CameraCharacteristics$Key;)Ljava/lang/Object;
+
+    move-result-object p3
+
+    check-cast p3, [I
+
+    check-cast p3, [I
+
+    .line 35
+    if-nez p3, :cond_13
+
+    .line 36
+    return-object v0
+
+    .line 39
+    :cond_13
+    invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object v1
+
+    const-string v2, "getAvailableKeyList"
+
+    const/4 v3, 0x3
+
+    new-array v4, v3, [Ljava/lang/Class;
+
+    const-class v5, Ljava/lang/Class;
+
+    const/4 v6, 0x0
+
+    aput-object v5, v4, v6
+
+    const-class v5, Ljava/lang/Class;
+
+    const/4 v7, 0x1
+
+    aput-object v5, v4, v7
+
+    const-class v5, Ljava/lang/Class;
+
+    const/4 v8, 0x2
+
+    aput-object v5, v4, v8
+
+    invoke-virtual {v1, v2, v4}, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+
+    move-result-object v1
+
+    .line 40
+    invoke-virtual {v1, v7}, Ljava/lang/reflect/Method;->setAccessible(Z)V
+
+    .line 41
+    new-array v2, v3, [Ljava/lang/Object;
+
+    aput-object p1, v2, v6
+
+    aput-object p2, v2, v7
+
+    aput-object p3, v2, v8
+
+    invoke-virtual {v1, p0, v2}, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object p0
+
+    check-cast p0, Ljava/util/List;
+    :try_end_40
+    .catch Ljava/lang/Exception; {:try_start_8 .. :try_end_40} :catch_41
 
     return-object p0
+
+    .line 42
+    :catch_41
+    move-exception p0
+
+    .line 43
+    const-string p1, "PHH"
+
+    const-string p2, "Failed"
+
+    invoke-static {p1, p2, p0}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
+
+    .line 44
+    return-object v0
 .end method
 
 .method public static setSamsungParameter(Landroid/hardware/camera2/CameraDevice;Ljava/lang/String;)V

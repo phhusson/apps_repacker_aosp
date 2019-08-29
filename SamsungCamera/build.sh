@@ -109,11 +109,12 @@ sed -i -E \
 #We want to use system classloader, not one reading from an unexisting file for us (/system/framework/scamera_sdk_util.jar)
 t="$(find |grep -E com.samsung.android.camera.core2.local.internal.PdkUtil.smali)"
 sed -i -E \
-	-e '/new-instance.*PathClassLoad/,/invoke-direct.*PathClassLoader.*init/d' \
-	-e '/sput.*v1.*mClassLoader/i invoke-static {}, Ljava/lang/ClassLoader;->getSystemClassLoader()Ljava/lang/ClassLoader;' \
-	-e '/sput.*v1.*mClassLoader/i move-result-object v1' \
-	-e 's|invoke-static \{v1, v2, v3\}, .*Class.*forName.*|invoke-static \{v1, v2, v3\}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;|g' \
+	-e 's|invoke-static \{v1, v2, v3\}, .*Class.*forName.*|invoke-static \{v1\}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;|g' \
 	"$t"
+
+for i in libcore2nativeutil.camera.samsung.so libimagecodec.quram.so;do
+	cp "$system_folder"/lib64/"$i" SamsungCamera/lib/arm64-v8a/
+done
 
 
 #invert bogus condition lline 111

@@ -1,5 +1,9 @@
 package com.android.internal.telephony;
 
+import android.os.SystemProperties;
+import android.text.TextUtils;
+import android.util.Log;
+
 public class HwModemCapability {
 	public static boolean isCapabilitySupport(int capability) {
 		boolean z = true;
@@ -9,7 +13,7 @@ public class HwModemCapability {
 			return false;
 		}
 		if (TextUtils.isEmpty(MODEM_CAP)) {
-			MODEM_CAP = SystemProperties.get("persist.radio.modem.cap", LogException.NO_VALUE);
+			MODEM_CAP = SystemProperties.get("persist.radio.modem.cap", "");
 		}
 		try {
 			int bcdValue = convertChar2Int(MODEM_CAP.charAt(bcdIndex));

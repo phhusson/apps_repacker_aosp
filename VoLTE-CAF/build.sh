@@ -78,16 +78,20 @@ rm -Rf ims/smali/android/os
 
 rm -Rf out
 java -jar ../baksmali.jar d boot-telephony-common_classes.dex
-mkdir -p ims/smali/org/codeaurora/ims/{utils,internal}
-cp out/org/codeaurora/ims/utils/*QtiCarrierConfigHelper* ims/smali/org/codeaurora/ims/utils/
-for f in QtiImsExtUtils 'QtiImsExtUtils$VideoQualityFeatureValuesConstants';do
-cp out/org/codeaurora/ims/utils/"$f".smali ims/smali/org/codeaurora/ims/utils/
+for f in $(cd out/org/codeaurora/ims;find -name \*.smali);do
+    mkdir -p ims/smali/org/codeaurora/ims/$(dirname $f)
+    cp out/org/codeaurora/ims/$f ims/smali/org/codeaurora/ims/$f
 done
-cp out/org/codeaurora/ims/QtiImsExtBase.smali ims/smali/org/codeaurora/ims/
-cp out/org/codeaurora/ims/QtiImsExtBase\$QtiImsExtBinder.smali ims/smali/org/codeaurora/ims/
-for f in IQtiImsExt 'IQtiImsExt$Stub';do
-    cp out/org/codeaurora/ims/internal/"$f".smali ims/smali/org/codeaurora/ims/internal/
-done
+#mkdir -p ims/smali/org/codeaurora/ims/{utils,internal}
+#cp out/org/codeaurora/ims/utils/*QtiCarrierConfigHelper* ims/smali/org/codeaurora/ims/utils/
+#for f in QtiImsExtUtils 'QtiImsExtUtils$VideoQualityFeatureValuesConstants';do
+#cp out/org/codeaurora/ims/utils/"$f".smali ims/smali/org/codeaurora/ims/utils/
+#done
+#cp out/org/codeaurora/ims/QtiImsExtBase.smali ims/smali/org/codeaurora/ims/
+#cp out/org/codeaurora/ims/QtiImsExtBase\$QtiImsExtBinder.smali ims/smali/org/codeaurora/ims/
+#for f in IQtiImsExt 'IQtiImsExt$Stub';do
+#    cp out/org/codeaurora/ims/internal/"$f".smali ims/smali/org/codeaurora/ims/internal/
+#done
 rm -Rf out
 
 java -jar ../apktool.jar b ims

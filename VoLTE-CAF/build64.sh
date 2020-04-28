@@ -19,7 +19,7 @@ java -jar ../apktool.jar d "$system_folder"/priv-app/ims/ims.apk
 apkbase="$system_folder"/priv-app/ims/
 fi
 mkdir -p "$libdst"
-find "$apkbase"/lib/arm64 -type f -exec cp '{}' "$libdst" \; 
+find "$apkbase"/lib/arm64 -type f -exec cp '{}' "$libdst" \;
 find "$apkbase"/lib/arm64 -type l -exec readlink '{}' + | \
 	while read f;do
 		p="$(echo $f |sed -E 's;/system;;g')"
@@ -49,7 +49,7 @@ cp "$system_folder"/lib64/libssl.so "$libdst"
 cp "$system_folder"/lib64/libutilscallstack.so "$libdst"
 cp "$system_folder"/lib64/libunwindstack.so "$libdst"
 cp "$system_folder"/lib64/libdexfile.so "$libdst"
-cp "$PWD"/libpdx_default_transport.so "$libdst"
+cp "$PWD"/64/libpdx_default_transport.so "$libdst"
 
 for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mapper@2.1.so android.hardware.configstore@1.1.so android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so;do
 	newName="$(echo "$i" |sed -E -e 's/^andr/libA/g' -e 's/@/-/g')"

@@ -2,13 +2,12 @@
 
 set -e
 
-if [ "$#" -ne 2 ];then
-	echo "Usage: $0 /path/to/system/ /path/to/vendor/"
+if [ "$#" -ne 1 ];then
+	echo "Usage: $0 /path/to/system/"
 	exit 1
 fi
 
 system_folder="$1"
-vendor_folder="$2"
 libdst="ims/lib/arm64-v8a/"
 
 rm -Rf ims
@@ -73,7 +72,7 @@ java -jar ../baksmali.jar d -o ims/smali android.hidl.manager-V1.0-java.jar
 sed -i -E \
     -e 's;^(.*)(private|protected|public) (private|protected|public)(.*)$;\1 public \4;g' \
 	$(find ims/smali/android -name \*.smali)
-rm ims/smali/android/util/AndroidException.smali
+rm -f ims/smali/android/util/AndroidException.smali
 rm -Rf ims/smali/android/os
 
 rm -Rf out

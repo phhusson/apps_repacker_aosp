@@ -1,0 +1,321 @@
+diff -Naur smali-old/com/spreadtrum/ims/ImsCallSessionImpl.smali smali/com/spreadtrum/ims/ImsCallSessionImpl.smali
+--- smali-old/com/spreadtrum/ims/ImsCallSessionImpl.smali	2020-12-16 19:53:30.102590872 +0800
++++ smali/com/spreadtrum/ims/ImsCallSessionImpl.smali	2020-12-16 12:59:44.583572104 +0800
+@@ -1433,14 +1433,14 @@
+ 
+     .line 217
+     .local v3, "configManager":Landroid/telephony/CarrierConfigManager;
+-    invoke-virtual {v3, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v3, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v4
+ 
+     if-eqz v4, :cond_3
+ 
+     .line 218
+-    invoke-virtual {v3, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v3, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v4
+ 
+diff -Naur smali-old/com/spreadtrum/ims/ImsCmccHelper.smali smali/com/spreadtrum/ims/ImsCmccHelper.smali
+--- smali-old/com/spreadtrum/ims/ImsCmccHelper.smali	2020-12-16 19:53:30.102590872 +0800
++++ smali/com/spreadtrum/ims/ImsCmccHelper.smali	2020-12-16 13:02:17.790312908 +0800
+@@ -25,161 +25,28 @@
+ .end method
+ 
+ .method public static getInstance(Landroid/content/Context;)Lcom/spreadtrum/ims/ImsCmccHelper;
+-    .locals 4
++    .locals 1
+     .param p0, "context"    # Landroid/content/Context;
+-
+-    .line 21
+-    const-string v0, "ImsCmccHelper"
+-
+-    const-string v1, "getInstance...... "
+-
+-    invoke-static {v0, v1}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+-
+-    .line 22
+-    sget-object v0, Lcom/spreadtrum/ims/ImsCmccHelper;->sInstance:Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    if-nez v0, :cond_0
+-
+-    .line 23
+-    new-instance v0, Landroid/app/AddonManager;
+-
+-    invoke-direct {v0, p0}, Landroid/app/AddonManager;-><init>(Landroid/content/Context;)V
+-
+-    .line 24
+-    .local v0, "addonManager":Landroid/app/AddonManager;
+-    const v1, 0x7f04001f
+-
+-    const-class v2, Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    invoke-virtual {v0, v1, v2}, Landroid/app/AddonManager;->getAddon(ILjava/lang/Class;)Ljava/lang/Object;
+-
+-    move-result-object v1
+-
+-    check-cast v1, Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    sput-object v1, Lcom/spreadtrum/ims/ImsCmccHelper;->sInstance:Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    .line 25
+-    const-string v1, "ImsCmccHelper"
+-
+-    new-instance v2, Ljava/lang/StringBuilder;
+-
+-    invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
+-
+-    const-string v3, "getInstance ["
+-
+-    invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    sget-object v3, Lcom/spreadtrum/ims/ImsCmccHelper;->sInstance:Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+-
+-    const-string v3, "]"
+-
+-    invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+-
+-    move-result-object v2
+-
+-    invoke-static {v1, v2}, Landroid/util/Log;->d(Ljava/lang/String;Ljava/lang/String;)I
+-
+-    .line 27
+-    .end local v0    # "addonManager":Landroid/app/AddonManager;
+-    :cond_0
+-    sget-object v0, Lcom/spreadtrum/ims/ImsCmccHelper;->sInstance:Lcom/spreadtrum/ims/ImsCmccHelper;
+-
+-    invoke-virtual {v0, p0}, Lcom/spreadtrum/ims/ImsCmccHelper;->setContext(Landroid/content/Context;)V
+-
+-    .line 28
+-    sget-object v0, Lcom/spreadtrum/ims/ImsCmccHelper;->sInstance:Lcom/spreadtrum/ims/ImsCmccHelper;
+-
++    
++    new-instance v0, Lcom/spreadtrum/ims/ImsCmccHelper;
++    invoke-direct {v0}, Lcom/spreadtrum/ims/ImsCmccHelper;-><init>()V
+     return-object v0
+ .end method
+ 
+ 
+ # virtual methods
+ .method public isCmccNetwork(I)Z
+-    .locals 3
++    .locals 1
+     .param p1, "serviceId"    # I
++    const/4 v0, 0x0
+ 
+-    .line 38
+-    iget-object v0, p0, Lcom/spreadtrum/ims/ImsCmccHelper;->mContext:Landroid/content/Context;
+-
+-    iget-object v1, p0, Lcom/spreadtrum/ims/ImsCmccHelper;->mContext:Landroid/content/Context;
+-
+-    const-string v1, "carrier_config"
+-
+-    invoke-virtual {v0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+-
+-    move-result-object v0
+-
+-    check-cast v0, Landroid/telephony/CarrierConfigManager;
+-
+-    .line 39
+-    .local v0, "configManager":Landroid/telephony/CarrierConfigManager;
+-    if-eqz v0, :cond_0
+-
+-    add-int/lit8 v1, p1, -0x1
+-
+-    invoke-virtual {v0, v1}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
+-
+-    move-result-object v1
+-
+-    if-eqz v1, :cond_0
+-
+-    .line 40
+-    add-int/lit8 v1, p1, -0x1
+-
+-    invoke-virtual {v0, v1}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
+-
+-    move-result-object v1
+-
+-    const-string v2, "support_video_call_only"
+-
+-    invoke-virtual {v1, v2}, Landroid/os/PersistableBundle;->getBoolean(Ljava/lang/String;)Z
+-
+-    move-result v1
+-
+-    return v1
+-
+-    .line 43
+-    :cond_0
+-    const/4 v1, 0x0
+-
+-    return v1
++    return v0
+ .end method
+ 
+ .method public rejectMediaChange(Lcom/spreadtrum/ims/ImsCallSessionImpl;)Z
+     .locals 1
+     .param p1, "session"    # Lcom/spreadtrum/ims/ImsCallSessionImpl;
+ 
+-    .line 48
+-    invoke-virtual {p1}, Lcom/spreadtrum/ims/ImsCallSessionImpl;->getServiceId()I
+-
+-    move-result v0
+-
+-    invoke-virtual {p0, v0}, Lcom/spreadtrum/ims/ImsCmccHelper;->isCmccNetwork(I)Z
+-
+-    move-result v0
+-
+-    if-eqz v0, :cond_0
+-
+-    if-eqz p1, :cond_0
+-
+-    invoke-virtual {p1}, Lcom/spreadtrum/ims/ImsCallSessionImpl;->isHasBackgroundCallAndActiveCall()Z
+-
+-    move-result v0
+-
+-    if-eqz v0, :cond_0
+-
+-    .line 49
+-    const/4 v0, 0x1
+-
+-    return v0
+-
+-    .line 51
+-    :cond_0
+     const/4 v0, 0x0
+ 
+     return v0
+diff -Naur smali-old/com/spreadtrum/ims/ImsConfigImpl.smali smali/com/spreadtrum/ims/ImsConfigImpl.smali
+--- smali-old/com/spreadtrum/ims/ImsConfigImpl.smali	2020-12-16 19:53:30.102590872 +0800
++++ smali/com/spreadtrum/ims/ImsConfigImpl.smali	2020-12-16 12:46:59.695937539 +0800
+@@ -1221,3 +1221,13 @@
+     .line 436
+     return-void
+ .end method
++
++.method public updateImsCarrierConfigs(Landroid/os/PersistableBundle;)V
++    .locals 0
++    return-void
++.end method
++
++.method public notifyRcsAutoConfigurationReceived([BZ)V
++    .locals 0
++    return-void
++.end method
+diff -Naur smali-old/com/spreadtrum/ims/ImsRIL.smali smali/com/spreadtrum/ims/ImsRIL.smali
+--- smali-old/com/spreadtrum/ims/ImsRIL.smali	2020-12-16 19:53:30.102590872 +0800
++++ smali/com/spreadtrum/ims/ImsRIL.smali	2020-12-16 13:22:32.005260820 +0800
+@@ -2609,7 +2609,7 @@
+ .end method
+ 
+ .method public dial(Ljava/lang/String;ILcom/android/internal/telephony/UUSInfo;Landroid/os/Message;)V
+-    .locals 1
++    .locals 8
+     .param p1, "address"    # Ljava/lang/String;
+     .param p2, "clirMode"    # I
+     .param p3, "uusInfo"    # Lcom/android/internal/telephony/UUSInfo;
+@@ -2618,7 +2618,15 @@
+     .line 422
+     iget-object v0, p0, Lcom/spreadtrum/ims/ImsRIL;->mCi:Lcom/android/internal/telephony/CommandsInterface;
+ 
+-    invoke-interface {v0, p1, p2, p3, p4}, Lcom/android/internal/telephony/CommandsInterface;->dial(Ljava/lang/String;ILcom/android/internal/telephony/UUSInfo;Landroid/os/Message;)V
++    move-object v1, p1 # address
++    const/4 v2, 0x0 # isEmergencyCall
++    const/4 v3, 0x0 # emergencyNumberInfo
++    const/4 v4, 0x0 # hasKnownUserIntentEmergency
++    move v5, p2 # clirMode
++    move-object v6, p3 # uusInfo
++    move-object v7, p4 # result
++    
++    invoke-interface/range {v0 .. v7}, Lcom/android/internal/telephony/CommandsInterface;->dial(Ljava/lang/String;ZLandroid/telephony/emergency/EmergencyNumber;ZILcom/android/internal/telephony/UUSInfo;Landroid/os/Message;)V
+ 
+     .line 423
+     return-void
+diff -Naur smali-old/com/spreadtrum/ims/ImsServiceImpl.smali smali/com/spreadtrum/ims/ImsServiceImpl.smali
+--- smali-old/com/spreadtrum/ims/ImsServiceImpl.smali	2020-12-16 19:53:30.105924173 +0800
++++ smali/com/spreadtrum/ims/ImsServiceImpl.smali	2020-12-16 18:36:08.166658230 +0800
+@@ -1492,7 +1492,10 @@
+     .line 996
+     :cond_1
+     :goto_1
+-    if-nez v1, :cond_2
++    # cond_2 creates the initial attach apn DataProfile, which uses a constructor
++    # that is no longer public on R.
++    # Getting rid of this doesn't seem to break anything.
++    #if-nez v1, :cond_2
+ 
+     .line 997
+     const-string v2, "initialAttachIMSApnSetting: X There in no available ims apn"
+@@ -5374,6 +5377,9 @@
+     .line 1093
+     .local v15, "carrier":Ljava/lang/String;
+     const/4 v13, 0x1
++    # make carrier null, so that we don't end up constructing DataProfile
++    # because we can no longer construct DataProfile here
++    const/4 v15, 0x0
+ 
+     if-eqz v15, :cond_3
+ 
+diff -Naur smali-old/com/spreadtrum/ims/ImsService.smali smali/com/spreadtrum/ims/ImsService.smali
+--- smali-old/com/spreadtrum/ims/ImsService.smali	2020-12-16 19:53:30.105924173 +0800
++++ smali/com/spreadtrum/ims/ImsService.smali	2020-12-16 12:46:59.772605320 +0800
+@@ -2084,7 +2084,7 @@
+     .local v1, "configManager":Landroid/telephony/CarrierConfigManager;
+     iget v2, p0, Lcom/spreadtrum/ims/ImsService;->mInCallPhoneId:I
+ 
+-    invoke-virtual {v1, v2}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v2}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 
+@@ -2097,7 +2097,7 @@
+     .line 1357
+     iget v2, p0, Lcom/spreadtrum/ims/ImsService;->mInCallPhoneId:I
+ 
+-    invoke-virtual {v1, v2}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v2}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 
+diff -Naur smali-old/com/spreadtrum/ims/vt/ImsVideoCallProvider.smali smali/com/spreadtrum/ims/vt/ImsVideoCallProvider.smali
+--- smali-old/com/spreadtrum/ims/vt/ImsVideoCallProvider.smali	2020-12-16 19:53:30.109257474 +0800
++++ smali/com/spreadtrum/ims/vt/ImsVideoCallProvider.smali	2020-12-16 12:47:00.125943779 +0800
+@@ -298,14 +298,14 @@
+ 
+     .line 186
+     .local v1, "configManager":Landroid/telephony/CarrierConfigManager;
+-    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 
+     if-eqz v2, :cond_1
+ 
+     .line 187
+-    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 
+@@ -755,14 +755,14 @@
+ 
+     .line 710
+     .local v1, "configManager":Landroid/telephony/CarrierConfigManager;
+-    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 
+     if-eqz v2, :cond_0
+ 
+     .line 711
+-    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForPhoneId(I)Landroid/os/PersistableBundle;
++    invoke-virtual {v1, v0}, Landroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+ 
+     move-result-object v2
+ 

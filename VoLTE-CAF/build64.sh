@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 if [ "$#" -ne 1 ];then
 	echo "Usage: $0 /path/to/system/"
@@ -11,58 +11,42 @@ system_folder="$1"
 libdst="ims/lib/arm64-v8a/"
 
 rm -Rf ims
-if [ -f "$system_folder"/app/ims/ims.apk ];then
-java -jar ../apktool.jar d "$system_folder"/app/ims/ims.apk
-apkbase="$system_folder"/app/ims/
+if [ -f "$system_folder"/../system_ext/priv-app/ims/ims.apk ];then
+java -jar ../apktool.jar d "$system_folder"/../system_ext/priv-app/ims/ims.apk
+apkbase="$system_folder"/../system_ext/priv-app/ims/
 else
 java -jar ../apktool.jar d "$system_folder"/priv-app/ims/ims.apk
 apkbase="$system_folder"/priv-app/ims/
 fi
 mkdir -p "$libdst"
-find "$apkbase"/lib/arm64 -type f -exec cp '{}' "$libdst" \;
-find "$apkbase"/lib/arm64 -type l -exec readlink '{}' + | \
-	while read f;do
-		p="$(echo $f |sed -E 's;/system;;g')"
-		cp "$system_folder"/$p "$libdst"
-	done
+#find "$apkbase"/lib/arm64 -type f -exec cp '{}' "$libdst" \;
+#find "$apkbase"/lib/arm64 -type l -exec readlink '{}' + | \
+#	while read f;do
+#		p="$(echo $f |sed -E 's;/system;;g')"
+#		cp "$system_folder"/$p "$libdst"
+#	done
+cp "$system_folder"/../system_ext/lib64/libimsmedia_jni.so "$libdst"
+cp "$system_folder"/../system_ext/lib64/libimscamera_jni.so "$libdst"
 
-cp "$system_folder"/lib64/libnativeloader.so "$libdst"
-cp "$system_folder"/lib64/libnativehelper.so "$libdst"
-cp "$system_folder"/lib64/libcutils.so "$libdst"
-cp "$system_folder"/lib64/libutils.so "$libdst"
-cp "$system_folder"/lib64/libgui.so "$libdst"
-cp "$system_folder"/lib64/libbinder.so "$libdst"
-cp "$system_folder"/lib64/libc++.so "$libdst"
-cp "$system_folder"/lib64/libbacktrace.so "$libdst"
-cp "$system_folder"/lib64/libvndksupport.so "$libdst"
-cp "$system_folder"/lib64/libui.so "$libdst"
-cp "$system_folder"/lib64/libhidlbase.so "$libdst"
-cp "$system_folder"/lib64/libhidltransport.so "$libdst"
-cp "$system_folder"/lib64/libbase.so "$libdst"
-cp "$system_folder"/lib64/libunwind.so "$libdst"
-cp "$system_folder"/lib64/libhardware.so "$libdst"
-cp "$system_folder"/lib64/libhwbinder.so "$libdst"
-cp "$system_folder"/lib64/liblzma.so "$libdst"
-cp "$system_folder"/lib64/libbufferhubqueue.so "$libdst"
-cp "$system_folder"/lib64/libcrypto.so "$libdst"
-cp "$system_folder"/lib64/libssl.so "$libdst"
-cp "$system_folder"/lib64/libutilscallstack.so "$libdst"
-cp "$system_folder"/lib64/libunwindstack.so "$libdst"
-cp "$system_folder"/lib64/libdexfile.so "$libdst"
+for i in nativeloader nativehelper cutils utils gui binder c++ backtrace vndksupport ui hidlbase hidltransport base unwind hardware hwbinder lzma bufferhubqueue crypto ssl utilscallstack unwindstack dexfile processgroup bufferhub input binderthreadstate cgrouprc;do
+    find "$system_folder/.." -name "lib${i}.so" |grep lib64 |xargs -I {} cp {} "$libdst"
+done
 cp "$PWD"/64/libpdx_default_transport.so "$libdst"
 
-for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mapper@2.1.so android.hardware.configstore@1.1.so android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so;do
+for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mapper@2.1.so android.hardware.configstore@1.1.so android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.graphics.bufferqueue@2.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so android.hardware.graphics.common@1.2.so android.frameworks.bufferhub@1.0.so android.hardware.graphics.allocator@3.0.so android.hardware.graphics.mapper@3.0.so;do
 	newName="$(echo "$i" |sed -E -e 's/^andr/libA/g' -e 's/@/-/g')"
-	cp "$system_folder"/lib64/$i "$libdst"/$newName
+	cp "$system_folder"/system/lib64/$i "$libdst"/$newName
 done
 
-for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mapper@2.1.so android.hardware.configstore@1.1.so android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so;do
+for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mapper@2.1.so android.hardware.configstore@1.1.so android.hardware.media@1.0.so android.hardware.graphics.common@1.0.so android.hidl.token@1.0.so android.hardware.graphics.mapper@2.0.so android.hardware.graphics.allocator@2.0.so android.hidl.token@1.0-utils.so android.hardware.graphics.bufferqueue@1.0.so android.hardware.graphics.bufferqueue@2.0.so android.hardware.configstore@1.0.so android.hardware.configstore-utils.so android.hardware.graphics.common@1.2.so android.frameworks.bufferhub@1.0.so android.hardware.graphics.allocator@3.0.so android.hardware.graphics.mapper@3.0.so;do
 	newName="$(echo "$i" |sed -E -e 's/^andr/libA/g' -e 's/@/-/g')"
 	sed -i -E "s/$i/$newName/g" "$libdst"/*.so
 done
 
-xmlstarlet ed -L -N a=http://schemas.android.com/apk/res/android -d '/manifest/@a:compileSdkVersion' -d '/manifest/@a:compileSdkVersionCodename' ims/AndroidManifest.xml
+xmlstarlet ed -L -N a=http://schemas.android.com/apk/res/android -d '/manifest/@a:compileSdkVersion' -d '/manifest/@a:compileSdkVersionCodename' -d '/manifest/application/@a:usesNonSdkApi' ims/AndroidManifest.xml
+sed -i 's/android:extractNativeLibs="false"/android:extractNativeLibs="true"/g' ims/AndroidManifest.xml
 sed -i -e '/com.qti.vzw.ims.internal/d' ims/AndroidManifest.xml
+sed -i -e '/uses-library/d' ims/AndroidManifest.xml
 sed -i \
 	-e 's;Landroid/telephony/ims/feature/MMTelFeature;Landroid/telephony/ims/compat/feature/MMTelFeature;g' \
 	-e 's;Landroid/telephony/ims/stub/ImsUtListenerImplBase;Landroid/telephony/ims/compat/stub/ImsUtListenerImplBase;g' \
@@ -75,12 +59,25 @@ sed -i -E \
 rm -f ims/smali/android/util/AndroidException.smali
 rm -Rf ims/smali/android/os
 
-rm -Rf out
-java -jar ../baksmali.jar d boot-telephony-common_classes.dex
-for f in $(cd out/org/codeaurora/ims;find -name \*.smali);do
-    mkdir -p ims/smali/org/codeaurora/ims/$(dirname $f)
-    cp out/org/codeaurora/ims/$f ims/smali/org/codeaurora/ims/$f
+sed -i '/loadLibrary/d' ims/smali/com/qualcomm/ims/vt/ImsMedia.smali
+
+#rm -Rf out
+#java -jar ../baksmali.jar d "$system_folder"/../system_ext/framework/oplus-telephony-common.jar
+#for f in $(cd oppo-telephony-common.jar.out/smali/org/codeaurora/telephony/utils;find -name \*.smali);do
+#    mkdir -p ims/smali/org/codeaurora/telephony/utils/$(dirname $f)
+#    cp oppo-telephony-common.jar.out/smali/org/codeaurora/telephony/utils/$f ims/smali/org/codeaurora/telephony/utils/$f
+#done
+
+java -jar ../baksmali.jar d "$system_folder"/../product/framework/ims-ext-common.jar
+for f in $(cd ims-ext-common.jar.out/smali/;find -name \*.smali);do
+    mkdir -p ims/smali/$(dirname $f)
+    cp ims-ext-common.jar.out/smali/"$f" ims/smali/"$f"
 done
+
+#java -jar ../baksmali.jar d "$system_folder"/system/framework/telephony-common.jar
+#mkdir -p ims/smali/com/android/internal/telephony/
+#cp ./telephony-common.jar.out/smali/com/android/internal/telephony/OemConstant* ims/smali/com/android/internal/telephony/
+
 #mkdir -p ims/smali/org/codeaurora/ims/{utils,internal}
 #cp out/org/codeaurora/ims/utils/*QtiCarrierConfigHelper* ims/smali/org/codeaurora/ims/utils/
 #for f in QtiImsExtUtils 'QtiImsExtUtils$VideoQualityFeatureValuesConstants';do

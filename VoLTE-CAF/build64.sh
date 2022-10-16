@@ -43,7 +43,14 @@ for i in android.hardware.graphics.common@1.1.so android.hardware.graphics.mappe
 	sed -i -E "s/$i/$newName/g" "$libdst"/*.so
 done
 
-xmlstarlet ed -L -N a=http://schemas.android.com/apk/res/android -d '/manifest/@a:compileSdkVersion' -d '/manifest/@a:compileSdkVersionCodename' -d '/manifest/application/@a:usesNonSdkApi' ims/AndroidManifest.xml
+xmlstarlet ed -L -N a=http://schemas.android.com/apk/res/android \
+    -d '/manifest/@a:compileSdkVersion' \
+    -d '/manifest/@a:compileSdkVersionCodename' \
+    -d '/manifest/application/@a:usesNonSdkApi' \
+    -d '/manifest/application/@a:persistent' \
+    -a '/manifest' -t attr -n 'android:sharedUserId' -v 'android.uid.phone' \
+    -a '/manifest/application/service' -t attr -n 'android:persistent' -v 'true' \
+    ims/AndroidManifest.xml
 sed -i 's/android:extractNativeLibs="false"/android:extractNativeLibs="true"/g' ims/AndroidManifest.xml
 sed -i -e '/com.qti.vzw.ims.internal/d' ims/AndroidManifest.xml
 sed -i -e '/uses-library/d' ims/AndroidManifest.xml
@@ -69,9 +76,16 @@ sed -i '/loadLibrary/d' ims/smali/com/qualcomm/ims/vt/ImsMedia.smali
 #done
 
 java -jar ../baksmali.jar d "$system_folder"/../product/framework/ims-ext-common.jar
-for f in $(cd ims-ext-common.jar.out/smali/;find -name \*.smali);do
+for f in $(cd out/org/codeaurora/ims/;find -name \*.smali);do
     mkdir -p ims/smali/$(dirname $f)
-    cp ims-ext-common.jar.out/smali/"$f" ims/smali/"$f"
+    cp out/org/codeaurora/ims/"$f" ims/smali/"$f"
+done
+
+rm -Rf out
+java -jar ../baksmali.jar d "$system_folder"/../system_ext/framework/qti-telephony-utils.jar
+for f in $(cd out/org/codeaurora/telephony/utils;find -name \*.smali);do
+    mkdir -p ims/smali/org/codeaurora/telephony/utils/$(dirname $f)
+    cp out/org/codeaurora/telephony/utils/$f ims/smali/org/codeaurora/telephony/utils/$f
 done
 
 #java -jar ../baksmali.jar d "$system_folder"/system/framework/telephony-common.jar

@@ -51,6 +51,10 @@ EOF
 #java -jar ../baksmali.jar d -o out2 "$1"/system/framework/mediatek-ims-common.jar
 #java -jar ../baksmali.jar d -o out3 "$1"/system/framework/mediatek-telephony-common.jar
 
+xmlstarlet ed -L -N a=http://schemas.android.com/apk/res/android \
+    -d '/manifest/application/@a:usesNonSdkApi' \
+    ImsService/AndroidManifest.xml
+
 java -jar ../apktool.jar b ImsService
 LD_LIBRARY_PATH=../signapk/ java -jar ../signapk/signapk.jar -a 4096\
 	../keys/platform.x509.pem \
